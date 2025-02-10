@@ -144,3 +144,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 For support, please open an issue in the GitHub repository.
+
+## Contact
+
+Feel free to contact me at [ayoadeosun10@gmail.com](mailto:ayoadeosun10@gmail.com)
