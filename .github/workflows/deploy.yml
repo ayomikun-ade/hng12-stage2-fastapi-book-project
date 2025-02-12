@@ -13,16 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          port: 22 #Or your ssh port
-          script: |
+      - name: Install SSHPass
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy Application
+        run: |
+          sshpass -p "${{ secrets.DEPLOY_KEY }}" ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             cd /home/${{ secrets.DEPLOY_USER }}/hng12-stage2-fastapi-book-project
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt
-            sudo systemctl restart fastapi-project
+            sudo systemctl restart fastapi-project.service
+          EOF
