@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: CD Pipeline
 
 on:
@@ -13,15 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install SSHPass
-        run: sudo apt-get install -y sshpass
-
-      - name: Deploy Application
-        run: |
-          sshpass -p "${{ secrets.DEPLOY_KEY }}" ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
-            cd /home/${{ secrets.DEPLOY_USER }}/hng12-stage2-fastapi-book-project
+      - name: SSH into EC2 and Pull Latest Code
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/hng12-stage2-fastapi-book-project
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt
-            sudo systemctl restart fastapi-project.service
-          EOF
+            sudo systemctl restart fastapi
